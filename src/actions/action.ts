@@ -6,6 +6,8 @@ import { revalidatePath } from 'next/cache'; // optional, if using caching
 
 // CREATE post
 export async function createPost(formData: FormData) {
+    // creating a router to navigate amoung route/
+    
   const title = formData.get('title') as string;
   const body = formData.get('body') as string;
 
@@ -14,10 +16,10 @@ export async function createPost(formData: FormData) {
   });
 
   if(respons){
-    return "post created successfully";
+    return true
   }
 
-  revalidatePath('/'); // Refresh UI if needed
+  revalidatePath('/post'); // Refresh UI if needed
 }
 
 // UPDATE post
@@ -39,5 +41,5 @@ export async function deletePost(id: number) {
     where: { id },
   });
 
-  revalidatePath('/');
+  revalidatePath('/post');
 }

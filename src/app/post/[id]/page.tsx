@@ -1,4 +1,11 @@
+
+import { Post } from '@/app/components/Post';
+import { prisma } from '@/app/lib/prisma';
+import { equal } from 'assert';
 import React from 'react'
+// import Post from "/components/Post";
+// import Post from "@/app/components/Post"
+
 
   interface PostPageProps {
   params: {
@@ -7,14 +14,19 @@ import React from 'react'
 }
 
 async function page({ params }: PostPageProps) {
-  const { id } = params;
-    // You can fetch post data based on the id here if needed
-     const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
-  const post = await res.json();
+   const {id} = params;
+   const post:any = await prisma.post.findUnique({
+    where:{
+        id:parseInt(id)
+    }
+   })
+
+   
+
   return (
-        <div className='max-w-2xl mx-auto p-6 min-h-screen'>
-      <h1 className='text-3xl font-bold mb-4'>{post.title}</h1>
-      <p className='text-lg'>{post.body}</p>
+    <div className='max-w-2xl mx-auto p-6 min-h-screen'>
+        
+      <Post post={post} key={post.id}/>
     </div>
 
   )
