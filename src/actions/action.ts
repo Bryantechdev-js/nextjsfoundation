@@ -5,6 +5,8 @@ import { prisma } from '@/app/lib/prisma';
 import { revalidatePath } from 'next/cache'; // optional, if using caching
 
 // CREATE post
+
+
 export async function createPost(formData: FormData) {
     // creating a router to navigate amoung route/
     
@@ -17,6 +19,7 @@ export async function createPost(formData: FormData) {
 
   if(respons){
     return true
+
   }
 
   revalidatePath('/post'); // Refresh UI if needed
@@ -42,4 +45,5 @@ export async function deletePost(id: number) {
   });
 
   revalidatePath('/post');
+  
 }

@@ -1,25 +1,60 @@
 "use client"
 
-import React from 'react'
-import { deletePost, updatePost } from '@/actions/action'
+import { useRouter } from "next/navigation";
+import { usePostContext } from "../context/PostContext";
+import Link from "next/link";
+import { deletePost } from "@/actions/action";
+import readLoud from "../lib/ReadLoud";
 
- export function Post({post}:any) {
-    // creating a new formdata from the post object recieved, use in the update post
+export function Post({ post }: { post: any }) {
+  if (!post) return <div>Loading or post not found.</div>;
 
-    const formData = new FormData()
-    formData.append("title",post.title)
-    formData.append("body",post.body)
-    const {title,body} = post
+  const { title, body, id } = post;
+
+  // ✅ Move all hooks here
+  const { posts, setPost } = usePostContext();
+  const router = useRouter(); // ✅ VALID hook call
+
+  const handleUpdate = () => {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("body", body);
+
+    setPost(post);
+    // or setPost(formData) if that's the design
+    
+    
+    router.push("/create");
+  };
+
   return (
-    <div>
-      <h2>{title}</h2>
-      <p>{body}</p>
+    <div className="border rounded p-4 my-4 shadow h-screen">
+      <h2 className="text-xl font-semibold">{title}</h2>
+      <p className="text-gray-700">{body}</p>
       <div className="buttonContainer space-x-5 my-5">
-        <button className="delete w-auto h-auto py-2 px-5 rounded-md bg-black text-white shadow" onClick={()=>deletePost(post.id)}>del</button>
-        <button className="update w-auto h-auto py-2 px-5 rounded-md bg-black text-white  shadow" onClick={()=>updatePost(post.id,formData)}>update</button>
+        <Link href="/post">
+          <button
+            className="delete py-2 px-5 rounded-md bg-red-600 text-white shadow"
+            onClick={() => deletePost(id)}
+          >
+            Delete
+          </button>
+        </Link>
+
+        <button
+          className="update py-2 px-5 rounded-md bg-blue-600 text-white shadow"
+          onClick={handleUpdate}
+        >
+          Update
+        </button>
+
+        <button
+          onClick={() => readLoud(title, body)}
+          className="bg-green-100 shadow w-auto h-auto px-8 py-3 rounded"
+        >
+          ReadLoud
+        </button>
       </div>
     </div>
-  )
+  );
 }
-
-

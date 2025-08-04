@@ -1,35 +1,30 @@
-
+// app/post/[id]/page.tsx
+import { prisma } from '@/app/lib/prisma'; // or your prisma location
+// import { Post } from './PostComponent'; // rename your Post component file to PostComponent.tsx
+import { notFound } from 'next/navigation';
+import { PostProvider } from '@/app/context/PostContext';
 import { Post } from '@/app/components/Post';
-import { prisma } from '@/app/lib/prisma';
-import { equal } from 'assert';
-import React from 'react'
-// import Post from "/components/Post";
-// import Post from "@/app/components/Post"
-
-
-  interface PostPageProps {
-  params: {
-    id: string;
-  };
+import { Suspense } from 'react';
+import LoadingPost from '../loading';
+interface params{
+    params: { id: string }
 }
 
-async function page({ params }: PostPageProps) {
-   const {id} = params;
-   const post:any = await prisma.post.findUnique({
-    where:{
-        id:parseInt(id)
-    }
-   })
+export default async function Page({ params }:params) {
+  const postId = await parseInt(params.id);
+  if (isNaN(postId)) notFound();
 
-   
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+  });
+
+  if (!post) notFound();
 
   return (
-    <div className='max-w-2xl mx-auto p-6 min-h-screen'>
-        
-      <Post post={post} key={post.id}/>
-    </div>
-
-  )
+    <PostProvider>
+      <Suspense>
+        <Post post={post} />
+      </Suspense>
+    </PostProvider>
+  );
 }
-
-export default page
